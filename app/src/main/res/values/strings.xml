@@ -6,6 +6,7 @@
 
     <string-array name="names">
         <item>Luke Skywalker</item>
+        <item>Han Solo</item>
         <item>C-3PO</item>
         <item>R2-D2</item>
         <item>Darth Vader</item>

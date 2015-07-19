@@ -18,9 +18,11 @@ import java.net.URL;
 public class StarWarsTask extends AsyncTask<String, Void, String> {
 
     private Context mContext;
+    private boolean loading_list = false;
 
     public interface StarWarsListener {
-        public void displayInfo(String data);
+        public void displayPersonInfo(String data);
+        public void set_name_list(String data);
     }
 
     public StarWarsTask(Context _context) {
@@ -31,7 +33,7 @@ public class StarWarsTask extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... num) {
 
-        String baseURL = "http://swapi.co/api/people/";
+        String baseURL = "http://swapi.co/api/";
         String query = "";
         String data = "";
 
@@ -39,7 +41,6 @@ public class StarWarsTask extends AsyncTask<String, Void, String> {
             query = baseURL + num[0];
 
             Log.i("tag", "Query: " + query);
-
 
             URL url = new URL(query);
 
@@ -69,7 +70,7 @@ public class StarWarsTask extends AsyncTask<String, Void, String> {
         super.onPostExecute(s);
 
         if (mContext instanceof StarWarsListener) {
-            ((StarWarsListener) mContext).displayInfo(s);
+            ((StarWarsListener) mContext).set_name_list(s);
         }
     }
 }

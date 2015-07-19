@@ -8,43 +8,49 @@
         android:id="@+id/imageView_headshot"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:gravity="center"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:gravity="center"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
-        android:padding="10dp"
         android:orientation="vertical"
+        android:padding="10dp"
         >
 
         <TextView
+            android:id="@+id/textView_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Name: "/>
 
         <TextView
+            android:id="@+id/textView_height"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Height: "/>
 
         <TextView
+            android:id="@+id/textView_mass"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Mass: "/>
 
         <TextView
+            android:id="@+id/textView_hair_color"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Hair Color: "/>
 
         <TextView
+            android:id="@+id/textView_skin_color"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Skin Color: "/>
 
         <TextView
+            android:id="@+id/textView_eye_color"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Eye Color: "/>
