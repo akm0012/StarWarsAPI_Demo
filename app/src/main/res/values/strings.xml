@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">StarWarsAPI</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+    <string-array name="names">
+        <item>Luke Skywalker</item>
+        <item>C-3PO</item>
+        <item>R2-D2</item>
+        <item>Darth Vader</item>
+        <item>Obi-Wan Kenobi</item>
+    </string-array>
+
+</resources>
