@@ -6,4 +6,5 @@ package com.mobiquity.amarshall.starwarsapi.interfaces;
 public interface Name_List_Interface {
 
     public void load_person_info(int index);
+
 }

@@ -10,9 +10,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.mobiquity.amarshall.starwarsapi.R;
 import com.mobiquity.amarshall.starwarsapi.interfaces.Name_List_Interface;
+import com.mobiquity.amarshall.starwarsapi.objects.StarWarsLoadDetailsTask;
 import com.mobiquity.amarshall.starwarsapi.objects.StarWarsTask;
 
 import org.json.JSONArray;
@@ -27,8 +30,9 @@ import java.util.ArrayList;
 public class Name_List_Fragment extends Fragment {
 
     public static final String TAG = "Name_List_Frag";
-    private int page_count = 1;
     private ArrayList<String> name_array_list;
+
+    private ProgressBar progressBar_list;
 
     private Activity mContainingActivity;
 
@@ -50,10 +54,10 @@ public class Name_List_Fragment extends Fragment {
     public void onAttach(Activity _activity) {
         super.onAttach(_activity);
 
-        if (_activity instanceof Name_List_Interface) {
+        if (_activity instanceof StarWarsTask.StarWarsListener) {
             mContainingActivity = _activity;
         } else {
-            throw new IllegalArgumentException("Must implement Name_List_Interface"); // This should never happen
+            throw new IllegalArgumentException("Must implement StarWarsTask.StarWarsListener"); // This should never happen
         }
 
     }
@@ -65,16 +69,14 @@ public class Name_List_Fragment extends Fragment {
 
         View view = _inflater.inflate(R.layout.selector_frag, _container, false);
 
-//        String[] name_list = getArguments().getStringArray("names");
-
-//        ArrayAdapter<String> nameAdapter = new ArrayAdapter<String>(mContainingActivity, android.R.layout.simple_list_item_1, name_list);
         nameAdapter = new ArrayAdapter<String>(mContainingActivity, android.R.layout.simple_list_item_1, name_array_list);
-
 
         ListView listView = (ListView) view.findViewById(R.id.listView);
         listView.setAdapter(nameAdapter);
 
         listView.setOnItemClickListener(name_selector);
+
+        progressBar_list = (ProgressBar) view.findViewById(R.id.progress_bar_list);
 
         return view;
 
@@ -88,11 +90,10 @@ public class Name_List_Fragment extends Fragment {
 
 
             // Because we checked we know this is a Name_List_Interface
-            ((Name_List_Interface) mContainingActivity).load_person_info(_position + 1);
+            ((StarWarsLoadDetailsTask.StarWarsLoadDetailListener) mContainingActivity).load_person_info(_position + 1);
 
         }
     };
-
 
     public void refresh_name_list(String _newName) {
         Log.d("tag", "(refresh_name_list) New Name: " + _newName);
@@ -101,5 +102,15 @@ public class Name_List_Fragment extends Fragment {
 
         nameAdapter.notifyDataSetChanged();
 
+    }
+
+    public void set_loading(boolean _isLoading) {
+        if (_isLoading) {
+            progressBar_list.setVisibility(View.VISIBLE);
+        } else {
+            progressBar_list.setVisibility(View.INVISIBLE);
+            Toast.makeText(mContainingActivity.getApplicationContext(), "Done Loading Names.",
+                    Toast.LENGTH_LONG).show();
+        }
     }
 }

@@ -15,17 +15,17 @@ import java.net.URL;
 /**
  * Created by amarshall on 7/17/15.
  */
-public class StarWarsTask extends AsyncTask<String, Void, String> {
+public class StarWarsLoadDetailsTask extends AsyncTask<String, Void, String> {
 
     private Context mContext;
 
-    public interface StarWarsListener {
-        public void displayPersonInfo(String data);
-        public void set_name_list(String data);
-        public void set_list_loading(boolean _is_loading);
+    public interface StarWarsLoadDetailListener {
+        public void display_data(String data);
+        public void set_details_loading(boolean _isLoading);
+        public void load_person_info(int _person_id);
     }
 
-    public StarWarsTask(Context _context) {
+    public StarWarsLoadDetailsTask(Context _context) {
 
         mContext = _context;
     }
@@ -34,10 +34,9 @@ public class StarWarsTask extends AsyncTask<String, Void, String> {
     protected void onPreExecute() {
         super.onPreExecute();
 
-        if (mContext instanceof StarWarsListener) {
-//            ((StarWarsListener) mContext).set_list_loading(true);
+        if (mContext instanceof StarWarsLoadDetailListener) {
+            ((StarWarsLoadDetailListener) mContext).set_details_loading(true);
         }
-
     }
 
     @Override
@@ -79,9 +78,9 @@ public class StarWarsTask extends AsyncTask<String, Void, String> {
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
 
-        if (mContext instanceof StarWarsListener) {
-            ((StarWarsListener) mContext).set_name_list(s);
-            ((StarWarsListener) mContext).set_list_loading(false);
+        if (mContext instanceof StarWarsLoadDetailListener) {
+            ((StarWarsLoadDetailListener) mContext).display_data(s);
+            ((StarWarsLoadDetailListener) mContext).set_details_loading(false);
         }
     }
 }
