@@ -3,6 +3,10 @@ package com.mobiquity.amarshall.starwarsapi.objects;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.mobiquity.amarshall.starwarsapi.utils.FileObjectManager;
+import com.mobiquity.amarshall.starwarsapi.utils.NetworkCheck;
 
 import org.apache.commons.io.IOUtils;
 
@@ -21,7 +25,9 @@ public class StarWarsTask extends AsyncTask<String, Void, String> {
 
     public interface StarWarsListener {
         public void displayPersonInfo(String data);
+
         public void set_name_list(String data);
+
         public void set_list_loading(boolean _is_loading);
     }
 
@@ -48,6 +54,13 @@ public class StarWarsTask extends AsyncTask<String, Void, String> {
         String data = "";
 
         try {
+            if (NetworkCheck.getStatus(mContext) < 0) {
+
+                // Not in cache
+                Toast.makeText(mContext, "No Network Connectivity.",
+                        Toast.LENGTH_LONG).show();
+            }
+
             query = baseURL + num[0];
 
             Log.i("tag", "Query: " + query);

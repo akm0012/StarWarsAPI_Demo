@@ -8,8 +8,10 @@ import android.widget.Toast;
 import com.mobiquity.amarshall.starwarsapi.fragments.Data_Display_Fragment;
 import com.mobiquity.amarshall.starwarsapi.fragments.Name_List_Fragment;
 import com.mobiquity.amarshall.starwarsapi.interfaces.Name_List_Interface;
+import com.mobiquity.amarshall.starwarsapi.objects.Entry;
 import com.mobiquity.amarshall.starwarsapi.objects.StarWarsLoadDetailsTask;
 import com.mobiquity.amarshall.starwarsapi.objects.StarWarsTask;
+import com.mobiquity.amarshall.starwarsapi.utils.FileObjectManager;
 import com.mobiquity.amarshall.starwarsapi.utils.NetworkCheck;
 
 import org.json.JSONArray;
@@ -47,15 +49,15 @@ public class MainActivity extends Activity implements StarWarsTask.StarWarsListe
                 .replace(R.id.right_container, data_display_fragment, Data_Display_Fragment.TAG)
                 .commit();
 
-        // Check for Network Connection
-        if (NetworkCheck.getStatus(this) >= 0) {
-            StarWarsTask starWarsTask = new StarWarsTask(this);
+//        // Check for Network Connection
+//        if (NetworkCheck.getStatus(this) >= 0) {
+        StarWarsTask starWarsTask = new StarWarsTask(this);
 
-            starWarsTask.execute("people/");
-        } else {
-            Toast.makeText(this.getApplicationContext(), "No Network Connectivity.",
-                    Toast.LENGTH_LONG).show();
-        }
+        starWarsTask.execute("people/");
+//        } else {
+        Toast.makeText(this.getApplicationContext(), "No Network Connectivity.",
+                Toast.LENGTH_LONG).show();
+//        }
 
 
     }
@@ -90,17 +92,15 @@ public class MainActivity extends Activity implements StarWarsTask.StarWarsListe
             Log.i("tag", "Page Count: " + page_count);
             if (next.compareTo("null") != 0) {
                 // Check for Network Connection
-                if (NetworkCheck.getStatus(this) >= 0) {
-                    StarWarsTask starWarsTask = new StarWarsTask(this);
-                    starWarsTask.execute("people/?page=" + page_count);
-                } else {
-                    Toast.makeText(this.getApplicationContext(), "No Network Connectivity.",
-                            Toast.LENGTH_LONG).show();
-                }
+//                if (NetworkCheck.getStatus(this) >= 0) {
+                StarWarsTask starWarsTask = new StarWarsTask(this);
+                starWarsTask.execute("people/?page=" + page_count);
+//                } else {
+                Toast.makeText(this.getApplicationContext(), "No Network Connectivity.",
+                        Toast.LENGTH_LONG).show();
+//                }
 
-            }
-
-            else {
+            } else {
                 Log.e("tag", "DONE LOADING!!!");
                 Name_List_Fragment frag = (Name_List_Fragment) getFragmentManager().findFragmentByTag(Name_List_Fragment.TAG);
                 frag.set_loading(false);
@@ -129,12 +129,12 @@ public class MainActivity extends Activity implements StarWarsTask.StarWarsListe
 
         Log.i("tag", " Loading ID: " + id);
 
-        if (NetworkCheck.getStatus(this) >= 0) {
-            starWarsLoadDetailsTask.execute("people/" + id);
-        } else {
-            Toast.makeText(this.getApplicationContext(), "No Network Connectivity.",
-                    Toast.LENGTH_LONG).show();
-        }
+//        if (NetworkCheck.getStatus(this) >= 0) {
+        starWarsLoadDetailsTask.execute("people/" + id);
+//        } else {
+        Toast.makeText(this.getApplicationContext(), "No Network Connectivity.",
+                Toast.LENGTH_LONG).show();
+//        }
 
 
     }
@@ -143,6 +143,21 @@ public class MainActivity extends Activity implements StarWarsTask.StarWarsListe
     public void display_data(String data) {
 
         Log.d("tag", "(display_data) Data: " + data);
+
+        if (NetworkCheck.getStatus(this) < 0) {
+
+            Entry cached_entry = FileObjectManager.get_from_cache(num[0], this);
+
+            // Check the cache
+            if (cached_entry != null) {
+                Toast.makeText(this, "Showing Cached Result.",
+                        Toast.LENGTH_LONG).show();
+            }
+
+            // Not in cache
+            Toast.makeText(this, "No Network Connectivity. Nothing Cached",
+                    Toast.LENGTH_LONG).show();
+        }
 
         try {
             JSONObject json = new JSONObject(data);

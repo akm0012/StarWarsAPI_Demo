@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public class Entry implements Serializable {
 
+    private String mID;
     private String mName;
     private String mHeight;
     private String mMass;
@@ -14,12 +15,12 @@ public class Entry implements Serializable {
     private String mGender;
     private String mURL;
 
-    public Entry(String _name, String _height, String _mass,
+    public Entry(String _ID, String _name, String _height, String _mass,
                  String _hairColor, String _skinColor,
                  String _eyeColor, String _birthYear,
                  String _gender, String _URL) {
 
-
+        mID = _ID;
         mName = _name;
         mHeight = _height;
         mMass = _mass;
@@ -30,6 +31,14 @@ public class Entry implements Serializable {
         mGender = _gender;
         mURL = _URL;
 
+    }
+
+    public String getmID() {
+        return mID;
+    }
+
+    public void setmID(String mID) {
+        this.mID = mID;
     }
 
     public String getmName() {
