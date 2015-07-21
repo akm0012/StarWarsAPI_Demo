@@ -15,6 +15,12 @@ public class Entry implements Serializable {
     private String mGender;
     private String mURL;
 
+    private boolean cached;
+
+    public Entry() {
+
+    }
+
     public Entry(String _ID, String _name, String _height, String _mass,
                  String _hairColor, String _skinColor,
                  String _eyeColor, String _birthYear,
@@ -113,6 +119,13 @@ public class Entry implements Serializable {
         this.mURL = mURL;
     }
 
+    public boolean isCached() {
+        return cached;
+    }
+
+    public void setCached(boolean cached) {
+        this.cached = cached;
+    }
 
 
 }

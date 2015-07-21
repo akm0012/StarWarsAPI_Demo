@@ -49,15 +49,15 @@ public class MainActivity extends Activity implements StarWarsTask.StarWarsListe
                 .replace(R.id.right_container, data_display_fragment, Data_Display_Fragment.TAG)
                 .commit();
 
-//        // Check for Network Connection
-//        if (NetworkCheck.getStatus(this) >= 0) {
-        StarWarsTask starWarsTask = new StarWarsTask(this);
+        // Check for Network Connection
+        if (NetworkCheck.getStatus(this) >= 0) {
+            StarWarsTask starWarsTask = new StarWarsTask(this);
 
-        starWarsTask.execute("people/");
-//        } else {
-        Toast.makeText(this.getApplicationContext(), "No Network Connectivity.",
-                Toast.LENGTH_LONG).show();
-//        }
+            starWarsTask.execute("people/");
+        } else {
+            Toast.makeText(this.getApplicationContext(), "No Network Connectivity.",
+                    Toast.LENGTH_LONG).show();
+        }
 
 
     }
@@ -92,13 +92,13 @@ public class MainActivity extends Activity implements StarWarsTask.StarWarsListe
             Log.i("tag", "Page Count: " + page_count);
             if (next.compareTo("null") != 0) {
                 // Check for Network Connection
-//                if (NetworkCheck.getStatus(this) >= 0) {
-                StarWarsTask starWarsTask = new StarWarsTask(this);
-                starWarsTask.execute("people/?page=" + page_count);
-//                } else {
-                Toast.makeText(this.getApplicationContext(), "No Network Connectivity.",
-                        Toast.LENGTH_LONG).show();
-//                }
+                if (NetworkCheck.getStatus(this) >= 0) {
+                    StarWarsTask starWarsTask = new StarWarsTask(this);
+                    starWarsTask.execute("people/?page=" + page_count);
+                } else {
+                    Toast.makeText(this.getApplicationContext(), "No Network Connectivity.",
+                            Toast.LENGTH_LONG).show();
+                }
 
             } else {
                 Log.e("tag", "DONE LOADING!!!");
@@ -132,51 +132,43 @@ public class MainActivity extends Activity implements StarWarsTask.StarWarsListe
 //        if (NetworkCheck.getStatus(this) >= 0) {
         starWarsLoadDetailsTask.execute("people/" + id);
 //        } else {
-        Toast.makeText(this.getApplicationContext(), "No Network Connectivity.",
-                Toast.LENGTH_LONG).show();
+//        Toast.makeText(this.getApplicationContext(), "No Network Connectivity.",
+//                Toast.LENGTH_LONG).show();
 //        }
 
 
     }
 
     @Override
-    public void display_data(String data) {
+    public void display_data(Entry _entry) {
 
-        Log.d("tag", "(display_data) Data: " + data);
-
-        if (NetworkCheck.getStatus(this) < 0) {
-
-            Entry cached_entry = FileObjectManager.get_from_cache(num[0], this);
-
-            // Check the cache
-            if (cached_entry != null) {
-                Toast.makeText(this, "Showing Cached Result.",
-                        Toast.LENGTH_LONG).show();
-            }
+        if (_entry == null) {
 
             // Not in cache
             Toast.makeText(this, "No Network Connectivity. Nothing Cached",
                     Toast.LENGTH_LONG).show();
+
+            return;
         }
 
-        try {
-            JSONObject json = new JSONObject(data);
-
-            Data_Display_Fragment frag = (Data_Display_Fragment) getFragmentManager().findFragmentByTag(Data_Display_Fragment.TAG);
-            frag.set_name(json.getString("name"));
-            frag.set_height(json.getString("height"));
-            frag.set_mass(json.getString("mass"));
-            frag.set_hair_color(json.getString("hair_color"));
-            frag.set_skin_color(json.getString("skin_color"));
-            frag.set_eye_color(json.getString("eye_color"));
-            frag.set_birth_year(json.getString("birth_year"));
-            frag.set_gender(json.getString("gender"));
-
-            frag.go_to_url(json.getString("name"));
-
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (_entry.isCached()) {
+            Toast.makeText(this, "Showing Cached Result.",
+                    Toast.LENGTH_LONG).show();
         }
+
+        Data_Display_Fragment frag = (Data_Display_Fragment) getFragmentManager().findFragmentByTag(Data_Display_Fragment.TAG);
+
+        frag.set_name(_entry.getmName());
+        frag.set_height(_entry.getmHeight());
+        frag.set_mass(_entry.getmMass());
+        frag.set_hair_color(_entry.getmHairColor());
+        frag.set_skin_color(_entry.getmSkinColor());
+        frag.set_eye_color(_entry.getmEyeColor());
+        frag.set_birth_year(_entry.getmBirthYear());
+        frag.set_gender(_entry.getmGender());
+
+        frag.go_to_url(_entry.getmName());
+
     }
 
     @Override
