@@ -1,6 +1,7 @@
 package com.mobiquity.amarshall.starwarsapi;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -20,16 +21,30 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+/*
+BUG: something wierd going on when I start in LANDSCAPE MODE
+ */
 
 public class MainActivity extends Activity implements StarWarsTask.StarWarsListener, StarWarsLoadDetailsTask.StarWarsLoadDetailListener {
 
     private int page_count = 1;
     private ArrayList<String> name_array_list;
+    private boolean landscape = false;
+
+    public interface Name_List_Listener {
+        public void refresh_name_list(String _newName);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (findViewById(R.id.container).getTag().equals("landscape")) {
+            landscape = true;
+        } else {
+            landscape = false;
+        }
 
         name_array_list = new ArrayList<String>();
 
@@ -37,17 +52,70 @@ public class MainActivity extends Activity implements StarWarsTask.StarWarsListe
         String[] name_array = new String[name_array_list.size()];
         name_array = name_array_list.toArray(name_array);
 
-        Log.e("tag", "Name Array List: " + name_array_list.toString());
+        Log.d("tag", "Name Array List: " + name_array_list.toString());
 
-        Name_List_Fragment name_list_fragment = Name_List_Fragment
-                .newInstance(name_array);
-        Data_Display_Fragment data_display_fragment = Data_Display_Fragment
-                .newInstance();
+        if (landscape) {
 
-        getFragmentManager().beginTransaction()
-                .replace(R.id.left_container, name_list_fragment, Name_List_Fragment.TAG)
-                .replace(R.id.right_container, data_display_fragment, Data_Display_Fragment.TAG)
-                .commit();
+            // Check to see if the fragment is there
+            if (getFragmentManager().findFragmentByTag(Data_Display_Fragment.TAG) == null) {
+
+                Log.i("tag", "Making new Data Display Fragment");
+
+                Data_Display_Fragment data_display_fragment = Data_Display_Fragment
+                        .newInstance();
+
+
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.right_container, data_display_fragment, Data_Display_Fragment.TAG)
+                        .commit();
+            } else {
+//                Log.i("tag", "Using old Data Display Fragment");
+//
+//                getFragmentManager().beginTransaction()
+//                        .replace(R.id.right_container, getFragmentManager().findFragmentByTag(Data_Display_Fragment.TAG))
+//                        .commit();
+            }
+
+            if (getFragmentManager().findFragmentByTag(Name_List_Fragment.TAG) == null) {
+
+                Log.i("tag", "Making new Name List Fragment");
+
+                Name_List_Fragment name_list_fragment = Name_List_Fragment
+                        .newInstance(name_array);
+
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.left_container, name_list_fragment, Name_List_Fragment.TAG)
+                        .commit();
+
+            } else {
+
+//                Log.i("tag", "Using old Name List Fragment");
+//
+//                getFragmentManager().beginTransaction()
+//                        .replace(R.id.left_container, getFragmentManager().findFragmentByTag(Name_List_Fragment.TAG))
+//                        .commit();
+
+            }
+        } else {
+            if (getFragmentManager().findFragmentByTag(Name_List_Fragment.TAG) != null) {
+
+//                Log.i("tag", "Using old Name Fragment Fragment");
+//
+//                getFragmentManager().beginTransaction()
+//                        .replace(R.id.left_container, getFragmentManager().findFragmentByTag(Name_List_Fragment.TAG))
+//                        .commit();
+
+            } else {
+                Log.i("tag", "Making new Name List Fragment");
+
+                Name_List_Fragment name_list_fragment = Name_List_Fragment
+                        .newInstance(name_array);
+
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.left_container, name_list_fragment, Name_List_Fragment.TAG).commit();
+            }
+
+        }
 
         // Check for Network Connection
         if (NetworkCheck.getStatus(this) >= 0) {
@@ -62,12 +130,6 @@ public class MainActivity extends Activity implements StarWarsTask.StarWarsListe
 
     }
 
-    @Override
-    public void displayPersonInfo(String data) {
-
-        Log.d("tag", "Displaying Person Info: " + data);
-
-    }
 
     @Override
     public void set_name_list(String data) {
@@ -80,12 +142,18 @@ public class MainActivity extends Activity implements StarWarsTask.StarWarsListe
             JSONArray results = json.getJSONArray("results");
             String next = json.getString("next");
 
-            Log.e("tag", "Results length: " + results.length());
+            Log.d("tag", "Results length: " + results.length());
 
             for (int i = 0; i < results.length(); i++) {
-                Log.e("tag", "Adding name: " + results.getJSONObject(i).getString("name"));
-                ((Name_List_Fragment) getFragmentManager().findFragmentByTag(Name_List_Fragment.TAG))
-                        .refresh_name_list(results.getJSONObject(i).getString("name"));
+                Log.d("tag", "Adding name: " + results.getJSONObject(i).getString("name"));
+
+                if (getFragmentManager().findFragmentByTag(Name_List_Fragment.TAG) instanceof Name_List_Listener) {
+                    Log.e("tag", "Inside IF statement.");
+                    ((Name_List_Listener) getFragmentManager().findFragmentByTag(Name_List_Fragment.TAG)).refresh_name_list(results.getJSONObject(i).getString("name"));
+                }
+
+
+
             }
 
             page_count++;
@@ -101,12 +169,12 @@ public class MainActivity extends Activity implements StarWarsTask.StarWarsListe
                 }
 
             } else {
-                Log.e("tag", "DONE LOADING!!!");
+                Log.d("tag", "DONE LOADING!!!");
                 Name_List_Fragment frag = (Name_List_Fragment) getFragmentManager().findFragmentByTag(Name_List_Fragment.TAG);
                 frag.set_loading(false);
             }
 
-            Log.e("tag", "Array List: " + name_array_list.toString());
+            Log.d("tag", "Array List: " + name_array_list.toString());
 
 
         } catch (JSONException e) {
@@ -129,12 +197,7 @@ public class MainActivity extends Activity implements StarWarsTask.StarWarsListe
 
         Log.i("tag", " Loading ID: " + id);
 
-//        if (NetworkCheck.getStatus(this) >= 0) {
         starWarsLoadDetailsTask.execute("people/" + id);
-//        } else {
-//        Toast.makeText(this.getApplicationContext(), "No Network Connectivity.",
-//                Toast.LENGTH_LONG).show();
-//        }
 
 
     }
@@ -142,44 +205,46 @@ public class MainActivity extends Activity implements StarWarsTask.StarWarsListe
     @Override
     public void display_data(Entry _entry) {
 
-        if (_entry == null) {
+        // Check to see if we are in landscape or portrait
+        // Pass Entry to a new Intent
+        if (!landscape) {
+            Bundle entryBundle = new Bundle();
+            entryBundle.putSerializable("entry", _entry);
 
-            // Not in cache
-            Toast.makeText(this, "No Network Connectivity. Nothing Cached",
-                    Toast.LENGTH_LONG).show();
+            Intent showDetail = new Intent(this, DetailsActivity.class);
 
-            return;
+            showDetail.putExtras(entryBundle);
+            startActivity(showDetail);
+        } else {
+
+            if (_entry == null) {
+
+                // Not in cache
+                Toast.makeText(this, "No Network Connectivity. Nothing Cached",
+                        Toast.LENGTH_LONG).show();
+
+                return;
+            }
+
+            if (_entry.isCached()) {
+                Toast.makeText(this, "Showing Cached Result.",
+                        Toast.LENGTH_LONG).show();
+            }
+
+            Data_Display_Fragment frag = (Data_Display_Fragment) getFragmentManager().findFragmentByTag(Data_Display_Fragment.TAG);
+
+            frag.set_name(_entry.getmName());
+            frag.set_height(_entry.getmHeight());
+            frag.set_mass(_entry.getmMass());
+            frag.set_hair_color(_entry.getmHairColor());
+            frag.set_skin_color(_entry.getmSkinColor());
+            frag.set_eye_color(_entry.getmEyeColor());
+            frag.set_birth_year(_entry.getmBirthYear());
+            frag.set_gender(_entry.getmGender());
+
+            frag.go_to_url(_entry.getmName());
         }
-
-        if (_entry.isCached()) {
-            Toast.makeText(this, "Showing Cached Result.",
-                    Toast.LENGTH_LONG).show();
-        }
-
-        Data_Display_Fragment frag = (Data_Display_Fragment) getFragmentManager().findFragmentByTag(Data_Display_Fragment.TAG);
-
-        frag.set_name(_entry.getmName());
-        frag.set_height(_entry.getmHeight());
-        frag.set_mass(_entry.getmMass());
-        frag.set_hair_color(_entry.getmHairColor());
-        frag.set_skin_color(_entry.getmSkinColor());
-        frag.set_eye_color(_entry.getmEyeColor());
-        frag.set_birth_year(_entry.getmBirthYear());
-        frag.set_gender(_entry.getmGender());
-
-        frag.go_to_url(_entry.getmName());
-
     }
 
-    @Override
-    public void set_list_loading(boolean _is_loading) {
-//        Name_List_Fragment frag = (Name_List_Fragment) getFragmentManager().findFragmentByTag(Name_List_Fragment.TAG);
-//        frag.set_loading(_is_loading);
-    }
 
-    @Override
-    public void set_details_loading(boolean _isLoading) {
-        Data_Display_Fragment frag = (Data_Display_Fragment) getFragmentManager().findFragmentByTag(Data_Display_Fragment.TAG);
-        frag.set_loading(_isLoading);
-    }
 }

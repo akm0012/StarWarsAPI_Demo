@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.mobiquity.amarshall.starwarsapi.MainActivity;
 import com.mobiquity.amarshall.starwarsapi.R;
 import com.mobiquity.amarshall.starwarsapi.interfaces.Name_List_Interface;
 import com.mobiquity.amarshall.starwarsapi.objects.StarWarsLoadDetailsTask;
@@ -27,7 +28,7 @@ import java.util.ArrayList;
 /**
  * Created by amarshall on 7/17/15.
  */
-public class Name_List_Fragment extends Fragment {
+public class Name_List_Fragment extends Fragment implements MainActivity.Name_List_Listener{
 
     public static final String TAG = "Name_List_Frag";
     private ArrayList<String> name_array_list;
@@ -37,6 +38,7 @@ public class Name_List_Fragment extends Fragment {
     private Activity mContainingActivity;
 
     private ArrayAdapter<String> nameAdapter;
+
 
     // Factory
     public static Name_List_Fragment newInstance(String[] _names) {
@@ -95,6 +97,7 @@ public class Name_List_Fragment extends Fragment {
         }
     };
 
+    @Override
     public void refresh_name_list(String _newName) {
         Log.d("tag", "(refresh_name_list) New Name: " + _newName);
 

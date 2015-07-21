@@ -29,23 +29,12 @@ public class StarWarsLoadDetailsTask extends AsyncTask<String, Void, Entry> {
     public interface StarWarsLoadDetailListener {
         public void display_data(Entry entry);
 
-        public void set_details_loading(boolean _isLoading);
-
         public void load_person_info(int _person_id);
     }
 
     public StarWarsLoadDetailsTask(Context _context) {
 
         mContext = _context;
-    }
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-
-        if (mContext instanceof StarWarsLoadDetailListener) {
-            ((StarWarsLoadDetailListener) mContext).set_details_loading(true);
-        }
     }
 
     @Override
@@ -133,7 +122,6 @@ public class StarWarsLoadDetailsTask extends AsyncTask<String, Void, Entry> {
 
         if (mContext instanceof StarWarsLoadDetailListener) {
             ((StarWarsLoadDetailListener) mContext).display_data(_entry);
-            ((StarWarsLoadDetailListener) mContext).set_details_loading(false);
         }
     }
 }

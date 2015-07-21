@@ -83,7 +83,7 @@ public class Data_Display_Fragment extends Fragment {
 
     public void go_to_url(String _url) {
 
-        webView.loadUrl("https://www.google.com/search?q=" + _url + " Star Wars");
+        webView.loadUrl("https://www.google.com/search?tbm=isch&q=" + _url + " Star Wars");
     }
 
     public void set_name(String _name) {

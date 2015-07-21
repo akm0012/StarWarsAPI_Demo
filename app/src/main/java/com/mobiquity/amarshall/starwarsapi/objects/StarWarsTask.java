@@ -24,11 +24,8 @@ public class StarWarsTask extends AsyncTask<String, Void, String> {
     private Context mContext;
 
     public interface StarWarsListener {
-        public void displayPersonInfo(String data);
-
         public void set_name_list(String data);
 
-        public void set_list_loading(boolean _is_loading);
     }
 
     public StarWarsTask(Context _context) {
@@ -94,7 +91,6 @@ public class StarWarsTask extends AsyncTask<String, Void, String> {
 
         if (mContext instanceof StarWarsListener) {
             ((StarWarsListener) mContext).set_name_list(s);
-            ((StarWarsListener) mContext).set_list_loading(false);
         }
     }
 }
