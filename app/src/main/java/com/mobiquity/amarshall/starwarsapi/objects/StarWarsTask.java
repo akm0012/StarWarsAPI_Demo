@@ -40,7 +40,6 @@ public class StarWarsTask extends AsyncTask<String, Void, String> {
         if (mContext instanceof StarWarsListener) {
 //            ((StarWarsListener) mContext).set_list_loading(true);
         }
-
     }
 
     @Override
